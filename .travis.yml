@@ -11,6 +11,7 @@ cache:
 
 script:
 - yarn run lint
+- yarn test
 
 notifications:
   slack:
