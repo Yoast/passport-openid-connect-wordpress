@@ -1,12 +1,12 @@
 const Strategy = require( "../lib/Strategy" );
 
+let initMockFunc = jest.fn( () => Promise.resolve() );
 let originalInit = null;
 const removeInit = () => {
 	if ( originalInit === null ) {
 		originalInit = Strategy.prototype.init;
-		Strategy.prototype.init = () => {
-			return Promise.resolve();
-		};
+
+		Strategy.prototype.init = initMockFunc;
 	}
 };
 
@@ -18,6 +18,26 @@ const restoreInit = () => {
 };
 
 describe( "Strategy", () => {
+	describe( "constructor", () => {
+		it( "succeeds", () => {
+			removeInit();
+
+			let strategy = new Strategy( {}, () => {} );
+
+			expect( strategy.name ).toBe( "passport-openid-connect-wordpress" );
+		} );
+
+		it( "calls init", () => {
+			initMockFunc.mockClear();
+			removeInit();
+
+			let strategy = new Strategy( {}, () => {} );
+
+			// Expect the init function to be called exactly once.
+			expect( initMockFunc.mock.calls ).toEqual( [ [] ] );
+		} );
+	});
+
 	describe( "transformWpUserInfo", () => {
 		it( "transforms the WordPress user information to loopback compatible information", () => {
 			let expected = {
