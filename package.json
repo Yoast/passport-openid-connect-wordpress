@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
+    "watch-tests": "jest --watch",
     "lint": "eslint lib"
   },
   "author": "",

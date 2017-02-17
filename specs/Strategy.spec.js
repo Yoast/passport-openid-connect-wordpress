@@ -1,5 +1,22 @@
 const Strategy = require( "../lib/Strategy" );
 
+let originalInit = null;
+const removeInit = () => {
+	if ( originalInit === null ) {
+		originalInit = Strategy.prototype.init;
+		Strategy.prototype.init = () => {
+			return Promise.resolve();
+		};
+	}
+};
+
+const restoreInit = () => {
+	if ( originalInit !== null ) {
+		Strategy.prototype.init = originalInit;
+		originalInit = null;
+	}
+};
+
 describe( "Strategy", () => {
 	describe( "transformWpUserInfo", () => {
 		it( "transforms the WordPress user information to loopback compatible information", () => {
@@ -59,4 +76,24 @@ describe( "Strategy", () => {
 			}
 		} );
 	} );
+
+	describe( "isCallbackUrl", () => {
+		it( "parses the URL", () => {
+			removeInit();
+			let subject = new Strategy( {}, () => {} );
+
+			let actual = subject.isCallbackUrl( "https://url.com" );
+
+			expect( actual ).toBe( false );
+		});
+
+		it( "compares the path against the config", () => {
+			removeInit();
+			let subject = new Strategy( { callbackPath: "/callback-path/" }, () => {} );
+
+			let actual = subject.isCallbackUrl( "https://url.com/callback-path/" );
+
+			expect( actual ).toBe( true );
+		});
+	})
 } );
