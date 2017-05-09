@@ -1,6 +1,6 @@
 {
   "name": "passport-openid-connect-wordpress",
-  "version": "1.1.1",
+  "version": "1.1.4",
   "description": "A strategy implementing OpenID Connect for passport",
   "main": "index.js",
   "scripts": {
